@@ -1,0 +1,21 @@
+version: '3'
+services:
+  app:
+    container_name: job-search-node
+    restart: always
+    build: ./back-end
+    ports:
+      - '4000:4000'
+    external_links:
+      - mongo
+  mongo:
+    container_name: mongo
+    image: mongo
+    ports:
+      - '27017:27017'
+  react:
+    container_name: job-search-react
+    build: ./front-end
+    ports:
+      - '3000:3000'
+ 
