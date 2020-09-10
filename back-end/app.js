@@ -9,6 +9,7 @@ var indexRouter = require('./routes/index');
 var mongoConfig = require('./configs/mongo-config')
 var cors = require('cors')
 var bodyParser = require('body-parser')
+
 mongoose.connect(mongoConfig, { useNewUrlParser: true }, function (error) {
   if (error) throw error
   console.log(`connect mongodb success`);

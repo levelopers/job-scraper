@@ -7,31 +7,32 @@ class App extends Component {
     super(props)
     this.state = {
       jobList: [],
-      searchValue: ''
+      searchValue: '',
+      editingJob: ''
     }
   }
   componentDidMount() {
-    fetch(requestUrl.url + '/scrap').then(res => {
-      fetch(requestUrl.url)
-        .then(res => res.json())
-        .then(result => {
-          console.log(result);
-          this.setState({
-            jobList: result
-          })
-        })
-    })
+    this.fetchData()
   }
 
-  handleSubmitTags = (tags) => {
-    // fetch(requestUrl.url)
-    //   .then(res => res.json())
-    //   .then(result => {
-    //     console.log(result);
-    //     this.setState({
-    //       jobList: result
-    //     })
-    //   })
+  fetchData = () => {
+    fetch(requestUrl.url)
+      .then(res => res.json())
+      .then(result => {
+        this.setState({
+          jobList: result
+        })
+      })
+  }
+
+  handleScrap = () => {
+    fetch(requestUrl.url + "/scrap")
+      .then(res => res.json())
+      .then(result => {
+        this.setState({
+          jobList: result
+        })
+      })
   }
 
   handleSearch = (e) => {
@@ -43,6 +44,7 @@ class App extends Component {
       }
     })
   }
+
   handleSearchClick = () => {
     fetch(requestUrl.url + `?title=${this.state.searchValue}`)
       .then(res => res.json())
@@ -53,46 +55,86 @@ class App extends Component {
       })
   }
 
-  handleOnEdit = () => {
-
+  handleOnEdit = (_id) => {
+    this.setState(prev => {
+      return {
+        ...prev,
+        editingJob: _id
+      }
+    })
   }
 
   handleOnSave = (_id, job) => {
-    console.log(_id, job);
     fetch(requestUrl.url + '/' + _id, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: { job }
+      body: JSON.stringify(job)
     })
       .then(res => res.json())
       .then(result => {
-        console.log(result);
+        this.fetchData()
+        this.setState(prev => {
+          return {
+            ...prev,
+            editingJob: ''
+          }
+        })
       })
   }
-  render() {
 
+  handleOnCancel = () => {
+    this.setState(prev => {
+      return {
+        ...prev,
+        editingJob: ''
+      }
+    })
+  }
+
+  handleOnDelete = (job) => {
+    const newJob = { ...job, hide: true }
+    fetch(requestUrl.url + '/' + job._id, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newJob)
+    })
+      .then(res => res.json())
+      .then(result => {
+        this.fetchData()
+      })
+  }
+
+  render() {
     return (
       <div style={styles.container}>
+        <div><button onClick={this.handleScrap}>Scrap data</button></div>
         <div>
           <lable>search job title: </lable>
           <input name="search" value={this.state.searchValue} onChange={this.handleSearch} />
           <button onClick={this.handleSearchClick}>Search</button>
         </div>
-        <ul style={styles.jobList}>
+        <div style={styles.jobList}>
           {this.state.jobList.map(job =>
-            <li>
-              <Job
-                job={job}
-                editing={true}
-                onEdit={this.handleOnEdit}
-                onSave={this.handleOnSave}
-                submitTags={this.handleSubmitTags}
-              />
-            </li>
+            <div>
+              {!job.hide &&
+                <div style={styles.job}>
+                  <Job
+                    job={job}
+                    editing={this.state.editingJob === job._id}
+                    onEdit={this.handleOnEdit}
+                    onSave={this.handleOnSave}
+                    onCancel={this.handleOnCancel}
+                    onDelete={this.handleOnDelete}
+                  />
+                </div>
+              }
+            </div>
           )}
-        </ul>
+        </div>
       </div>
     );
   }
@@ -109,6 +151,9 @@ var styles = {
   jobList: {
     border: '1px solid black',
     margin: 30
+  },
+  job: {
+    flexDirection: 'row'
   }
 }
 

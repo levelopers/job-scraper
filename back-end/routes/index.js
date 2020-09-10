@@ -17,15 +17,14 @@ router.get('/', function (req, res, next) {
 router.post('/:id', function (req, res, next) {
   const { id } = req.params
   const { title, company, location, summary, tags, hide } = req.body
-  console.log(req.body);
-  // Job.createOrUpdateJob(id, new Job({
-  //   title, company, location, summary, tags, hide
-  // }), function (err, job) {
-  //   if (err) {
-  //     next(err)
-  //   }
-  //   res.json(job)
-  // })
+  Job.createOrUpdateJob(id, new Job({
+    title, company, location, summary, tags, hide
+  }), function (err, job) {
+    if (err) {
+      next(err)
+    }
+    res.json(job)
+  })
 })
 
 router.get('/scrap', function (req, res, next) {

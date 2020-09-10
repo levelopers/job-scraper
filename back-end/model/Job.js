@@ -40,7 +40,20 @@ module.exports.getAllJobs = function (query, callback) {
 }
 
 module.exports.createOrUpdateJob = function (id, newJob, callback) {
-  Job.findOneAndUpdate({ _id: id }, newJob, callback)
+  Job.findOneAndUpdate(
+    { _id: id },
+    {
+      $set: {
+        title: newJob.title,
+        company: newJob.company,
+        location: newJob.location,
+        summary: newJob.summary,
+        hide: newJob.hide,
+        tags: newJob.tags
+      }
+    },
+    { new: true },
+    callback)
 }
 
 module.exports.updateTags = function (id, tags, callback) {

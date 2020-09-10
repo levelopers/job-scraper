@@ -4,45 +4,75 @@ export default function Job({
   job,
   editing,
   onSave,
+  onCancel,
   onEdit,
-  submitTags
+  onDelete,
 }) {
   const { _id, id, title, company, location, tags, hide, summary, } = job
   const [titleValue, titleInput] = Input(title)
+  const [companyValue, companyInput] = Input(company)
+  const [locationValue, locationInput] = Input(location)
+  const [summaryValue, summaryInput] = Input(summary)
   const [tagValue, tagInput] = Input(tags.join(','))
   return (
     <div style={styles.container}>
-      {/* {!hide && editing ?
+      {editing ?
         <div>
-          <button onClick={() => onSave(_id,
-            { titleValue, company, location, tags, summary, hide, id }
-          )}>
-            save
+          <div style={styles.btns}>
+            <button style={styles.btn} onClick={() => onSave(_id,
+              {
+                title: titleValue,
+                company: companyValue,
+                location: locationValue,
+                tags: tagValue.split(','),
+                summary: summaryValue,
+                hide,
+                id
+              }
+            )}>
+              save
             </button>
-          <div>{titleInput} {company} {location} </div>
-          <div>{summary}</div>
-          <div>{tags}</div>
+            <button style={styles.btn} onClick={onCancel}>cancel</button>
+            <span style={styles.closeBtn} onClick={() => onDelete(job)}>X</span>
+          </div>
+          <div>{titleInput} {companyInput} {locationInput} </div>
+          <div>{summaryInput}</div>
+          <div>tags: {tagInput} </div>
         </div>
-        : */}
-      <div>
-        {/* <button onClick={() => onEdit(id)}>edit</button> */}
-        <div style={styles.header}>{title} {company} {location} </div>
-        <div>{summary}</div>
-        {/* <div>tags: {tagInput} <button onClick={() => submitTags(tagValue)}>submit</button></div> */}
-      </div>
-      {/* } */}
+        :
+        <div>
+          <div style={styles.btns}>
+            <button style={styles.btn} onClick={() => onEdit(_id)}>edit</button>
+            <span style={styles.closeBtn} onClick={() => onDelete(job)}>X</span>
+          </div>
+          <div style={styles.header}>
+            {title} {company} {location}
+          </div>
+          <div>{summary}</div>
+          <span>tags: {tags.join(',')}</span>
+        </div>
+      }
     </div>
   )
 }
 
 var styles = {
   container: {
-    width: '80%',
     flex: 1,
     alighSelf: 'center',
     padding: 20
   },
   header: {
     padding: 10
+  },
+  btns: {
+    display: 'flex',
+  },
+  closeBtn: {
+    marginLeft: 'auto',
+    cursor: 'pointer'
+  },
+  btn: {
+    margin: '0 20px 20px 0'
   }
 }
