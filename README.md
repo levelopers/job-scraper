@@ -3,7 +3,7 @@
 ### Instructions:
 
 ``` 
-run docker-compose up -d
+docker-compose up -d
 cd ./front-end
 npm i
 npm start
