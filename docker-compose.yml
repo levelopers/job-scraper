@@ -14,12 +14,11 @@ services:
     ports:
       - '27017:27017'
   react:
-    container_name: job-search-react
-    build: ./front-end
-    command: ["npm", "start"]
-    # volumes:
-    #   - ./frontend:./front-end
-    #   - node-modules:/front-end/node_modules
+    container_name: job-search-react-prod
+    build:
+      context: ./front-end
+      dockerfile:
+        Dockerfile.prod
     ports:
-      - "3000:3000"
+      - "3000:80"
  
